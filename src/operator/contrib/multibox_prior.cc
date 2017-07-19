@@ -21,6 +21,7 @@ inline void MultiBoxPriorForward(const Tensor<cpu, 2, DType> &out,
   const int num_ratios = static_cast<int>(ratios.size());
   int count = 0;
 
+
   for (int r = 0; r < in_height; ++r) {
     float center_y = (r + offsets[0]) * step_y;
     for (int c = 0; c < in_width; ++c) {
@@ -28,7 +29,8 @@ inline void MultiBoxPriorForward(const Tensor<cpu, 2, DType> &out,
       // ratio = 1, various sizes
       for (int i = 0; i < num_sizes; ++i) {
         float size = sizes[i];
-        float w = size / 2;
+        //float w = size / 2;
+        float w =  size / in_width * in_height / 2;
         float h = size / 2;
         out[count][0] = center_x - w;  // xmin
         out[count][1] = center_y - h;  // ymin
@@ -40,7 +42,8 @@ inline void MultiBoxPriorForward(const Tensor<cpu, 2, DType> &out,
       float size = sizes[0];
       for (int j = 1; j < num_ratios; ++j) {
         float ratio = sqrtf(ratios[j]);
-        float w = size * ratio / 2;
+        //float w = size * ratio / 2;
+        float w = size / in_width * in_height * ratio / 2;
         float h = size / ratio / 2;
         out[count][0] = center_x - w;  // xmin
         out[count][1] = center_y - h;  // ymin
@@ -50,6 +53,8 @@ inline void MultiBoxPriorForward(const Tensor<cpu, 2, DType> &out,
       }
     }
   }
+
+
 }
 }  // namespace mshadow
 
